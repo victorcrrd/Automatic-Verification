@@ -20,14 +20,14 @@ requires s != []
 ensures allEqual(s) <==> forall i :: 0 <= i < |s| ==> s[|s|-1] == s[i] {}
 
 // Subsequences starting at the beginning
-lemma subsequencesRightAllEqual(s:seq<int>)
+lemma subsequencesLeftAllEqual(s:seq<int>)
 decreases |s|
 ensures allEqual(s) <==> forall i :: 0 <= i <= |s| ==> allEqual(s[..i]) {
     assume allEqual(s) <==> forall i :: 0 <= i <= |s| ==> allEqual(s[..i]);
 }
 
 // Subsequences ending at the end
-lemma subsequencesLeftAllEqual(s:seq<int>)
+lemma subsequencesRightAllEqual(s:seq<int>)
 decreases |s|
 ensures allEqual(s) <==> forall i :: 0 <= i <= |s| ==> allEqual(s[i..]) {
     assume allEqual(s) <==> forall i :: 0 <= i <= |s| ==> allEqual(s[i..]);
