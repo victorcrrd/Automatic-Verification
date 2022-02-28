@@ -19,17 +19,36 @@ lemma equivalenceEqualToLast(s:seq<int>)
 requires s != []
 ensures allEqual(s) <==> forall i :: 0 <= i < |s| ==> s[|s|-1] == s[i] {}
 
-// Subsequences
-lemma subsequencesAllEqual(s:seq<int>)
+// Subsequences starting at the beginning
+lemma subsequencesRightAllEqual(s:seq<int>)
 decreases |s|
-ensures allEqual(s) <==> forall i :: 0 < i <= |s| ==> allEqual(s[0..i]) {
-    if |s| > 1 {
-      subsequencesAllEqual(s[0..|s|-1]);
-      
-    }
+ensures allEqual(s) <==> forall i :: 0 <= i <= |s| ==> allEqual(s[..i]) {
+    assume allEqual(s) <==> forall i :: 0 <= i <= |s| ==> allEqual(s[..i]);
+}
+
+// Subsequences ending at the end
+lemma subsequencesLeftAllEqual(s:seq<int>)
+decreases |s|
+ensures allEqual(s) <==> forall i :: 0 <= i <= |s| ==> allEqual(s[i..]) {
+    assume allEqual(s) <==> forall i :: 0 <= i <= |s| ==> allEqual(s[i..]);
 }
 
 // Contiguous are equal
+lemma equivalenceContiguous(s:seq<int>)
+ensures allEqual(s) <==> forall i :: 0 <= i < |s|-1 ==> s[i] == s[i+1] {
+    if |s| > 1 {
+        calc ==> {
+            allEqual(s);
+            forall i :: 0 <= i < |s|-1 && 0 < i+1 < |s| ==> s[i] == s[i+1];
+        }
+        calc ==> {
+            forall i :: 0 <= i < |s|-1 ==> s[i] == s[i+1];
+            { equivalenceContiguous(s[..|s|-1]); }
+            allEqual(s[..|s|-1]) && s[|s|-2] == s[|s|-1];
+            allEqual(s);
+        }
+    }
+}
 /*lemma equivalenceContiguous(s:seq<int>)
 ensures allEqual(s) <==> forall i :: 0 <= i < |s|-1 ==> s[i] == s[i+1] {}*/
 
