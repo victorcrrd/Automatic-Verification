@@ -59,19 +59,35 @@ decreases s
 ensures sumSM(s) == sumL(s)
 ensures sumSM(s) == sumR(s) {
     equalSum(s, 0, |s|);
-    if s == [] {
-        assert sumR(s) == 0 == sumSM(s);
-    } else {
+    if s != [] {
+        SeqFacts<int>();
+        assert multiset(s[0..|s|]) == multiset(s[0..|s|-1]) + multiset(s[|s|-1..|s|]);
+        assert multiset{s[|s|-1]} == multiset(s[|s|-1..|s|]);
         calc == {
-            sumR(s);
-            sumR(s[..|s|-1]) + s[|s|-1];
-            { sumS(s[..|s|-1]); }
-            sumSM(s[..|s|-1]) + s[|s|-1];
-            { sumOne(multiset(s[..|s|-1]), s[|s|-1]); }
             sumSM(s);
+            { sumOne(multiset(s[0..|s|]), s[|s|-1]); }
+            sumSM(s[..|s|-1]) + s[|s|-1];
+            //sumR(s);
+            //sumR(s[..|s|-1]) + s[|s|-1];
+            //{ sumS(s[..|s|-1]); }
+            //sumSM(s[..|s|-1]) + s[|s|-1];
+            //{ sumOne(multiset(s[..|s|-1]), s[|s|-1]); }
+            //sumSM(s);
         }
     }
 }
+
+lemma SeqFacts<T>()
+    ensures forall s:seq<T> | |s| >= 1 :: |s[1..|s|]| == |s|-1;
+    ensures forall s:seq<T>, i, j | 0 <= i <= j <= |s| :: |s[i..j]| == j-i
+    ensures forall s:seq<T>, i, j | 0 <= i < j <= |s| :: s[i..j][..(j-i)-1] == s[i..j-1]
+    ensures forall s:seq<T>, i, j, k | 0 <= i <= k <= j <= |s| :: multiset(s[i..k]) + multiset(s[k..j]) == multiset(s[i..j]) {
+        forall s : seq<T>, i, j, k | 0 <= i <= k <= j <= |s|
+        ensures multiset(s[i..k]) + multiset(s[k..j]) == multiset(s[i..j]) {
+            assert s[i..k] + s[k..j] == s[i..j];
+        }
+    }
+
 /*
 //Prove this using SumOne
 
@@ -91,15 +107,7 @@ ensures SumS(s)==SumS(r)
 
 
 
-lemma SeqFacts<T>()
-     ensures forall s : seq<T> | |s|>=1 ::|s[1..|s|]|==|s|-1;
-     ensures forall s : seq<T>, i,j | 0<=i<=j<=|s| :: |s[i..j]| == j-i
-     ensures forall s : seq<T>, i,j | 0<=i<j<=|s| :: s[i..j][..(j-i)-1] == s[i..j-1]
-     ensures forall s : seq<T>,i,j,k | 0<=i<=k<=j<=|s| :: multiset(s[i..k])+multiset(s[k..j])==multiset(s[i..j])
-   {forall s : seq<T>,i,j,k | 0<=i<=k<=j<=|s|
-    ensures multiset(s[i..k])+multiset(s[k..j])==multiset(s[i..j])
-    {assert s[i..k]+s[k..j]==s[i..j];}
-    }
+
 
 lemma ArrayFactsM<T>()
 	ensures forall v : array<T>  :: v[..v.Length] == v[..];
