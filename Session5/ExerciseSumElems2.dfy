@@ -205,7 +205,7 @@ lemma ArrayFactsM<T>()
         }
 }
 
-method sumElems3(v:array<int>) returns (sum:int)
+method sumElemsE(v:array<int>) returns (sum:int)
 ensures sum == sumVM(v, 0, v.Length) {
     ArrayFactsM<int>();
     sum := 0;
