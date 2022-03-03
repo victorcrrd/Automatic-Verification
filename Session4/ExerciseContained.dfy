@@ -19,7 +19,7 @@ ensures b == (forall i :: 0 <= i < n ==> (exists j :: 0 <= j < m && v[i] == w[j]
 	decreases n - i, m - j, b
 	invariant i <= n
 	invariant j <= m
-	invariant b == (forall k :: 0 <= k < i ==> (exists l :: 0 <= l < j && v[k] == w[l])) {
+	invariant b ==> (forall k :: 0 <= k < i ==> (exists l :: 0 <= l < j && v[k] == w[l])) {
 		if v[i] == w[j] {
 			i := i + 1;
 			j := j + 1;
