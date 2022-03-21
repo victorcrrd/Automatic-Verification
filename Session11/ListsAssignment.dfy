@@ -7,6 +7,13 @@ ensures l.Nil? <==> length(l) == 0 {
         case Cons(_, xs) => 1 + length(xs)
 }
 
+predicate sorted(l:List<int>) {
+    match l
+        case Nil => true
+        case Cons(x, Nil) => true
+        case Cons(x, Cons(y, ys)) => x <= y && sorted(Cons(y, ys))
+}
+
 function elems<T> (l:List<T>) : multiset<T> {
     match l
         case Nil => multiset{}
@@ -15,6 +22,46 @@ function elems<T> (l:List<T>) : multiset<T> {
 
 function min(x:nat, y:nat) : nat {
     if x <= y then x else y
+}
+
+function insert(x:int, l:List<int>) : (res:List<int>)
+requires sorted(l)
+ensures sorted(res)
+ensures elems(res) == multiset{x} + elems(l) {
+    match l
+        case Nil => Cons(x, Nil)
+        case Cons(y, ys) => if x <= y then Cons(x, Cons(y, ys))
+                            else Cons(y, insert(x, ys))
+}
+
+function delete<T> (x:T, l:List<T>) : (res:List<T>)
+ensures elems(res) == elems(l) - multiset{x} {
+    match l
+        case Nil => Nil
+        case Cons(y, ys) => if x == y then ys
+                            else Cons(y, delete(x, ys))
+}
+
+function search<T> (x:T, l:List<T>) : (res:bool)
+ensures res == (x in elems(l)) {
+    match l
+        case Nil => false
+        case Cons(y, ys) => if x == y then true
+                            else search(x, ys)
+}
+
+function take<T> (n:nat, l:List<T>) : (res:List<T>)
+ensures length(res) == min(n, length(l)) {
+    if n == 0 then Nil else match l
+        case Nil => Nil
+        case Cons(x, xs) => Cons(x, take(n-1, xs))
+}
+
+function drop<T> (n:nat, l:List<T>) : (res:List<T>)
+ensures length(res) == if length(l) < n then 0 else length(l) - n {
+    if n == 0 then l else match l
+        case Nil => Nil
+        case Cons(x, xs) => drop(n-1, xs)
 }
 
 // 1. Write the code of the split function and verify it
