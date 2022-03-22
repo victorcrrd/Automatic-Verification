@@ -39,27 +39,3 @@ ensures b <==> countEven(v[..]) == v.Length - countEven(v[..]) {
     }
     b := dif == 0;
 }
-
-/*
-method sameEvenb(v:array<int>) returns (b:bool)
-requires positive(v[0..v.Length])
-ensures b <==> CountEven(v[0..v.Length]) == (v.Length-CountEven(v[0..v.Length]))
-{
-  var i:=0;
-  var dif:int;
-  dif := 0;
-  while (i<v.Length)
-    decreases //write
-    invariant //write
-  {  ArrayFacts<int>(); 
-
-    if (v[i]%2==0) { dif := dif+1;}
-    else {dif := dif-1;}
-    i := i+1;
-  }
-  return (dif==0);
-}
-
-
-
-*/
