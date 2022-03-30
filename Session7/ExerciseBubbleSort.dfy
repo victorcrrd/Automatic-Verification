@@ -66,9 +66,8 @@ ensures a[..c] == old(a[..c]) && a[f..] == old(a[f..]) {
         invariant forall l, k :: c <= l < i && i <= k < f ==> a[l] <= a[k]
         invariant !b ==> sortedSeg(a, j, f) {
             if a[j-1] > a[j] {
-                assert multiset(d[c..f]) == multiset(a[c..f]) == multiset(old(a[c..f]));
                 a[j-1], a[j] := a[j], a[j-1];
-                assert multiset(d[c..f]) == multiset(a[c..f]) == multiset(old(a[c..f]));
+                assert multiset(d[c..f]) == multiset(a[c..f]) == multiset(old(a[c..f])); //somehow necessary
                 b := true;
             }
             j := j - 1;
