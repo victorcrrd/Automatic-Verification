@@ -27,6 +27,7 @@ ensures v[f+1..] == old(v[f+1..]) {
     invariant multiset(v[..])[e] == multiset(old(v[..]))[e]
     invariant multiset(v[c..f+1]) == multiset(old(v[c..f+1]))
     invariant v[..c] == old(v[..c]) && v[f+1..] == old(v[f+1..]) {
+        assert q > k;
         if v[k] < e {
             v[k], v[p] := v[p], v[k];
             p := p + 1;
@@ -38,7 +39,10 @@ ensures v[f+1..] == old(v[f+1..]) {
             k := k + 1;
         }
     }
-    assert q - p == multiset(v[c..k])[e] + multiset(v[q..f+1])[e] >= 0;
+    assert k == q;
+    assert v[c..k] + v[q..f+1] == v[c..f+1];
+    assert e in multiset(v[c..f+1]);
+    assert q - p == multiset(v[c..k])[e] + multiset(v[q..f+1])[e] >= 1;
     q := q - 1;
 }
 
