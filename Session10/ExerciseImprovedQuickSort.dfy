@@ -13,7 +13,34 @@ ensures forall u :: p <= u <= q ==> v[u] == e
 ensures forall u :: q < u <= f ==> e < v[u]
 ensures multiset(v[c..f+1]) == multiset(old(v[c..f+1]))
 ensures v[..c] == old(v[..c])
-ensures v[f+1..] == old(v[f+1..])
+ensures v[f+1..] == old(v[f+1..]) {
+    var k:int := c;
+    p := c;
+    q := f + 1;
+    while k < q
+    decreases q - k
+    invariant c <= p <= k <= q <= f + 1
+    invariant forall u :: c <= u < p ==> v[u] < e
+    invariant forall u :: p <= u < k ==> v[u] == e
+    invariant forall u :: q <= u <= f ==> e < v[u]
+    invariant k - p == multiset(v[c..k])[e] + multiset(v[q..f+1])[e]
+    invariant multiset(v[..])[e] == multiset(old(v[..]))[e]
+    invariant multiset(v[c..f+1]) == multiset(old(v[c..f+1]))
+    invariant v[..c] == old(v[..c]) && v[f+1..] == old(v[f+1..]) {
+        if v[k] < e {
+            v[k], v[p] := v[p], v[k];
+            p := p + 1;
+            k := k + 1;
+        } else if v[k] > e {
+            v[k], v[q-1] := v[q-1], v[k];
+            q := q - 1;
+        } else {
+            k := k + 1;
+        }
+    }
+    assert q - p == multiset(v[c..k])[e] + multiset(v[q..f+1])[e] >= 0;
+    q := q - 1;
+}
 
 method quicksort(a:array<int>, c:int, f:int)
 modifies a
