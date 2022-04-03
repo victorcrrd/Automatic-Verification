@@ -16,6 +16,7 @@ class Node {
     constructor(v:int)
     ensures Valid()
     ensures fresh(repr)
+    ensures repr == {this}
     ensures model == [v] {
         val := v;
         next := null;
@@ -32,6 +33,23 @@ class Node {
     }
 
     method append(node:Node)
+    modifies repr
+    requires Valid()
+    requires node.Valid()
+    requires forall o :: o in repr ==> o !in node.repr
+    requires node !in repr
+    decreases repr
+    ensures Valid()
+    ensures repr == old(repr) + node.repr
+    ensures model == old(model) + node.model {
+        if next == null {
+            next := node;
+        } else {
+            next.append(node);
+        }
+        repr := repr + node.repr;
+        model := model + node.model;
+    }
 }
 
 class List {
@@ -64,9 +82,10 @@ class List {
     }
 
     method add(v:int)
-    modifies this
+    modifies repr
     requires Valid()
     ensures Valid()
+    ensures fresh(repr - old(repr))
     ensures model == [v] + old(model) {
         var node := new Node(v);
         node.next := first;
@@ -78,6 +97,21 @@ class List {
     }
 
     method append(v:int)
+    modifies repr
+    requires Valid()
+    decreases repr
+    ensures Valid()
+    ensures fresh(repr - old(repr))
+    ensures model == old(model) + [v] {
+        var node := new Node(v);
+        if first == null {
+            first := node;
+        } else {
+            first.append(node);
+        }
+        repr := repr + {node};
+        model := model + [v];
+    }
 }
 
 method main() {
@@ -87,7 +121,7 @@ method main() {
     assert l.length() == 1;
     l.add(2);
     assert l.length() == 2;
-    //l.append(7);
-    //assert l.length() == 3;
-    //assert l.model == [2, 1, 7];
+    l.append(7);
+    assert l.length() == 3;
+    assert l.model == [2, 1, 7];
 }
