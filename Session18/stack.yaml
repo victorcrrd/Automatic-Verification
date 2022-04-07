@@ -1,0 +1,19 @@
+name: ListsAssignment
+
+resolver: lts-18.3
+compiler: ghc-8.10.7
+
+extra-deps:
+- rest-rewrite-0.2.0
+- git: https://github.com/ucsd-progsys/liquidhaskell
+  commit: b8dc0c2bdff8e6ea9ec4a9fc2439e89fdcd73b69 
+  subdirs:
+      - .
+      - liquid-base
+      - liquid-prelude
+      - liquid-ghc-prim
+- git: https://github.com/ucsd-progsys/liquid-fixpoint
+  commit: f61543c96bb56f47b9e70e3a9f0613a240f81356
+
+ghc-options:     
+  lh-tests: -fplugin=LiquidHaskell
