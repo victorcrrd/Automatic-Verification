@@ -37,13 +37,3 @@ ensures c == countMin(v, min(v, v.Length), v.Length) {
         i := i + 1;
     }
 }
-
-
-/*
-
-
- method mCountMin(v:array<int>) returns (c:int)
-requires v.Length>0
-ensures c==countMin(v,min(v,v.Length),v.Length)
-//Implement and verify an O(v.Length) algorithm
-*/
