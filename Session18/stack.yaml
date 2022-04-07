@@ -17,3 +17,5 @@ extra-deps:
 
 ghc-options:     
   lh-tests: -fplugin=LiquidHaskell
+
+system-ghc: true
