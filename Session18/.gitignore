@@ -1,0 +1,5 @@
+*
+!.gitignore
+!ListsAssignment.hs
+!ListsAssignment.cabal
+!stack.yaml
