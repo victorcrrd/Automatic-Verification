@@ -1,3 +1,61 @@
+predicate sorted(a:array<int>, i:nat, j:nat)
+reads a
+requires 0 <= i <= j <= a.Length {
+    forall l, k :: 0 <= i <= l <= k < j ==> a[l] <= a[k] 
+}
+
+lemma arrayFacts()
+ensures forall a:array<int> ::
+    a[..] == a[0..] == a[..a.Length] == a[0..a.Length] {}
+
+method heapSortWithExtraSpace(a:array<int>)
+modifies a
+ensures sorted(a, 0, a.Length)
+ensures multiset(a[..]) == multiset(old(a[..])) {
+    arrayFacts();
+
+    ghost var a0 := a[..];
+    var queue := new WilliamsHeap(a.Length);
+
+    var i:int := 0;
+    while i < a.Length
+    decreases a.Length - i
+    invariant 0 <= i == queue.next <= a.Length == queue.v.Length
+    invariant queue.isHeap()
+    invariant multiset(queue.model()) == multiset(queue.v[..i])
+    invariant multiset(queue.v[..i]) == multiset(a0[..i])
+    invariant a0 == a[..]
+    invariant fresh(queue.repr) {
+        queue.insert(a[i]);
+        i := i + 1;
+    }
+    assert queue.isHeap();
+    assert multiset(queue.model()) == multiset(queue.v[..queue.next]);
+    assert multiset(queue.v[..queue.next]) == multiset(a0);
+
+    i := 0;
+    while i < a.Length
+    decreases a.Length - i
+    invariant 0 <= i <= a.Length
+    invariant 0 <= queue.next == a.Length - i
+    invariant sorted(a, 0, i)
+    invariant queue.isHeap()
+    invariant multiset(queue.model()) + multiset(a[..i]) == multiset(a0)
+    invariant fresh(queue.repr) {
+        assert sorted(a, 0, i);
+        assert forall j :: 0 <= j < queue.next ==> queue.min() <= queue.v[j];
+        // this assumption should be removed and could be proved by adding an
+        // appropriate invariant in the loop and proving that it's mantained,
+        // however, I wasn't able to do it
+        assume forall j :: 0 <= j < i ==> a[j] <= queue.min();
+        a[i] := queue.min();
+        queue.deleteMin();
+        i := i + 1;
+    }
+    assert a[..] == a[..a.Length];
+    assert multiset(a[..]) == multiset(a[..a.Length]) == multiset(a0);
+}
+
 class WilliamsHeap {
     var v:array<int>;
     var next:nat;
