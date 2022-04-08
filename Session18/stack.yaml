@@ -1,4 +1,4 @@
-name: ListsAssignment
+name: Session18
 
 resolver: lts-18.3
 compiler: ghc-8.10.7
