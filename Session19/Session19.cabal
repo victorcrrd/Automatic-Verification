@@ -13,4 +13,5 @@ library
         liquid-prelude,
         liquidhaskell
     exposed-modules:
-        ListsAssignment
+        BooleanMeasuresAssignment
+        TreesAssignment
