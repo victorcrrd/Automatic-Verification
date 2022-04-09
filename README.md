@@ -45,6 +45,8 @@ methods and specification of methods.
 Introduction to LiquidHaskell and Liquid Types.
 
 ## [Session 19](/Session19)
+Measures, verification of data types and simple example of verification of Skew
+Heaps.
 
 # Usage
 
