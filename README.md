@@ -1,8 +1,8 @@
 # Automatic Verification
 This repository contains all the projects I completed for the Computer-aided
 Program Verification class I took at the Formal Methods in Computer Science
-master's degree taught at Universidad Complutense de Madrid, where we were
-taught Dafny and LiquidHaskell. Next, I will briefly explain what was done in
+master's degree taught at Universidad Complutense de Madrid, where we learned
+about Dafny and LiquidHaskell. Next, I will briefly explain what was done in
 each session.
 
 ## [Session 1](/Session1)
