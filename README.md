@@ -45,8 +45,8 @@ methods and specification of methods.
 Introduction to LiquidHaskell and Liquid Types.
 
 ## [Session 19](/Session19)
-Measures, verification of data types and simple example of verification of Skew
-Heaps.
+Measures, verification of data types and a simple example of verification of
+Skew Heaps.
 
 # Usage
 
@@ -58,7 +58,8 @@ also use Dafny as a [CLI program](https://github.com/dafny-lang/dafny#try-dafny)
 ## LiquidHaskell
 To check that the Haskell files are verified with LiquidHaskell (i.e., that
 functions' types are correctly refined with Liquid Types) you just simply have
-to locate in the desired folder (say `SessionX`) and run `stack build`, that is
+to locate in the desired folder (say, `SessionX`) and run `stack build`, that
+is:
 ```console
 you@you:~$ cd SessionX
 you@you:~/SessionX$ stack build
