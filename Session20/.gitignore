@@ -1,0 +1,5 @@
+*
+!.gitignore
+!*.hs
+!Session20.cabal
+!stack.yaml
