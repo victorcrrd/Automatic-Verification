@@ -47,3 +47,20 @@ Introduction to LiquidHaskell and Liquid Types.
 ## [Session 19](/Session19)
 
 # Usage
+
+## Dafny
+In my case I used Dafny as a [Visual Studio Code extension](https://github.com/dafny-lang/ide-vscode)
+that checks that your code is correctly verified everytime you save. You may
+also use Dafny as a [CLI program](https://github.com/dafny-lang/dafny#try-dafny).
+
+## LiquidHaskell
+To check that the Haskell files are verified with LiquidHaskell (i.e., that
+functions' types are correctly refined with LiquidTypes) you just simply have to
+locate in the desired folder (say `SessionX`) and run `stack build`, that is
+```console
+you@you:~$ cd SessionX
+you@you:~/SessionX$ stack build
+```
+
+If everything is correct you may see an output line that starts with
+`**** LIQUID: SAFE`.
