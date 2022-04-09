@@ -57,8 +57,8 @@ also use Dafny as a [CLI program](https://github.com/dafny-lang/dafny#try-dafny)
 
 ## LiquidHaskell
 To check that the Haskell files are verified with LiquidHaskell (i.e., that
-functions' types are correctly refined with LiquidTypes) you just simply have to
-locate in the desired folder (say `SessionX`) and run `stack build`, that is
+functions' types are correctly refined with Liquid Types) you just simply have
+to locate in the desired folder (say `SessionX`) and run `stack build`, that is
 ```console
 you@you:~$ cd SessionX
 you@you:~/SessionX$ stack build
