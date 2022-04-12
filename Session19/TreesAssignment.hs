@@ -45,7 +45,7 @@ add x t@(Node y l r)
     | y < x = Node y l (add x r)
     | otherwise = t
 
-data MinPair a = MP {  mElt::a, rest::BST a }
+data MinPair a = MP { mElt::a, rest::BST a }
 {-@ data MinPair a = MP { mElt::a, rest::BSTR a mElt } @-}
 
 {-@ measure notLeaf @-}
