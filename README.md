@@ -48,6 +48,10 @@ Introduction to LiquidHaskell and Liquid Types.
 Measures, verification of data types and a simple example of verification of
 Skew Heaps.
 
+## [Session20](/Session20)
+Exercises from the 7th chapter of the [Liquid Haskell's tutorial](http://ucsd-progsys.github.io/liquidhaskell-tutorial/Tutorial_07_Measure_Int.html)
+on Numeric Measures.
+
 # Usage
 
 ## Dafny
