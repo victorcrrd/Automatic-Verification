@@ -74,3 +74,54 @@ ensures l.Iterators() >= old(l.Iterators()) {
         assert [elem] + Seq.Rev(l.Model()[..itp.Index()]) == Seq.Rev(l.Model()[..it.Index()]);
     }
 }
+
+method fillQueue(l:List, q:Queue)
+modifies l, l.Repr(), q, q.Repr()
+requires l.Valid()
+requires q.Valid()
+requires forall x :: x in l.Repr() || x in q.Repr() ==> allocated(x)
+requires {q} + q.Repr() !! {l} + l.Repr()
+requires q.Empty()
+
+ensures l.Valid() && l.Model() == old(l.Model())
+ensures q.Valid() && q.Model() == l.Model()
+ensures {q} + q.Repr() !! {l} + l.Repr()
+
+ensures forall x {:trigger x in l.Repr(), x in old(l.Repr())} | x in l.Repr() && x !in old(l.Repr()) :: fresh(x)
+ensures fresh(l.Repr()-old(l.Repr()))
+ensures forall x | x in l.Repr() :: allocated(x)
+ensures forall x {:trigger x in q.Repr(), x in old(q.Repr())} | x in q.Repr() && x !in old(q.Repr()) :: fresh(x)
+ensures fresh(q.Repr()-old(q.Repr()))
+ensures forall x | x in q.Repr() :: allocated(x)
+
+ensures l.Iterators() >= old(l.Iterators()) {
+    var it:ListIterator := l.Begin();
+    var elem:int;
+
+    while it.HasNext()
+    decreases l.Size() - it.Index()
+    invariant l.Valid()
+    invariant q.Valid()
+    invariant it.Valid()
+    invariant l == it.Parent()
+    invariant it.Parent().Valid()
+    invariant 0 <= it.Index() <= l.Size() == |l.Model()|
+    invariant it in l.Iterators()
+    invariant l == old(l)
+    invariant l.Model() == old(l.Model())
+    invariant !it.HasNext() <==> it.Index() == l.Size()
+
+    invariant {q} + q.Repr() !! {l} + l.Repr()
+    invariant q.Model() == l.Model()[..it.Index()]
+
+    invariant forall x {:trigger x in l.Repr(), x in old(l.Repr())} | x in l.Repr() && x !in old(l.Repr()) :: fresh(x)
+    invariant forall x {:trigger x in q.Repr(), x in old(q.Repr())} | x in q.Repr() && x !in old(q.Repr()) :: fresh(x)
+    invariant forall x | x in l.Repr() :: allocated(x)
+    invariant forall x | x in q.Repr() :: allocated(x)
+    invariant l.Iterators() >= old(l.Iterators())
+
+    invariant l.Model()[..l.Size()] == l.Model(); {
+        elem := it.Next();
+        q.Enqueue(elem);
+    }
+}
