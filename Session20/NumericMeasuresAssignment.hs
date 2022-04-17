@@ -214,3 +214,30 @@ anotherMatrixExample :: Matrix Int
 anotherMatrixExample = M 2 2 (V 2 [V 2 [1, 2], V 2 [4, 5]])
 
 -- Exercise 9
+{-@ withSize :: xss:List (List a) -> Maybe (ListX (ListX a (head xss)) xss) @-}
+withSize :: List (List a) -> Maybe (List (List a))
+withSize [] = Nothing
+withSize (xs:[]) = Just $ xs:[]
+withSize (xs:xss)
+    | ok = fmap (\zss -> xs:zss) yss
+    | otherwise = Nothing
+  where c = size xs
+        yss = withSize xss
+        ok = size (head xss) == c
+
+{-@ matFromListWithSize :: c:Pos -> r:Pos -> ListN (ListN a c) r -> MatrixN a r c @-}
+matFromListWithSize :: Int -> Int -> List (List a) -> Matrix a
+matFromListWithSize c r xss = M r c (vecFromList (map vecFromList xss))
+
+{-@ matFromList :: xss:List (List a) -> Maybe (MatrixN a (size xss) (size (head xss))) @-}
+matFromList :: List (List a) -> Maybe (Matrix a)
+matFromList [] = Nothing
+matFromList xss@(xs:_)
+    | c > 0 = fmap (matFromListWithSize c r) (withSize xss)
+    | otherwise = Nothing
+  where r = size xss
+        c = size xs
+
+{-@ test9 :: Maybe (MatrixN Int 2 3) @-}
+test9 :: Maybe (Matrix Int)
+test9 = matFromList [[1, 2, 3], [4, 5, 6]]
