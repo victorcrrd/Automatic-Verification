@@ -241,3 +241,33 @@ matFromList xss@(xs:_)
 {-@ test9 :: Maybe (MatrixN Int 2 3) @-}
 test9 :: Maybe (Matrix Int)
 test9 = matFromList [[1, 2, 3], [4, 5, 6]]
+
+-- Exercise 10
+{-@ vEmp :: VectorN a 0 @-}
+vEmp = V 0 []
+
+{-@ vCons :: a -> x:Vector a -> VectorN a {vDim x + 1} @-}
+vCons x (V n xs) = V (n+1) (x:xs)
+
+{-@ transpose :: m:Matrix a -> MatrixN a (mCol m) (mRow m) @-}
+transpose (M r c rows) = M c r $ txgo c r rows
+
+{-@ txgo :: c:Nat -> r:Nat -> VectorN (VectorN a c) r -> VectorN (VectorN a r) c @-}
+txgo :: Int -> Int -> Vector (Vector a) -> Vector (Vector a)
+txgo 0 r (V _ []) = vEmp
+txgo 0 _ _ = vEmp -- necessary because LiquidHaskell cannot deduce that c > 0 in the next equation
+txgo c r (V _ vss) = vCons (V r (map vHd vss)) (txgo (c-1) r (vecFromList (map vTl vss)))
+
+{-@ matProd :: (Num a) => mx:Matrix a -> my:{v:Matrix a | mCol mx = mRow v} -> MatrixN a (mRow mx) (mCol my) @-}
+matProd :: (Num a) => Matrix a -> Matrix a -> Matrix a
+matProd (M rx _ xs) my@(M _ cy ys) = M rx cy elts
+  where elts = for xs $ \xi -> for ys' $ \yj -> dotProduct xi yj
+        M _ _ ys' = transpose my
+
+{-@ ok23 :: MatrixN Int 2 3 @-}
+ok23 :: Matrix Int
+ok23 = M 2 3 (V 2 [V 3 [1, 2, 3], V 3 [4, 5, 6]])
+
+{-@ ok32 :: MatrixN Int 3 2 @-}
+ok32 :: Matrix Int
+ok32 = M 3 2 (V 3 [V 2 [1, 4], V 2 [2, 5], V 2 [3, 6]])
