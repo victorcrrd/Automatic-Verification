@@ -125,3 +125,105 @@ ensures l.Iterators() >= old(l.Iterators()) {
         q.Enqueue(elem);
     }
 }
+
+predicate isPalindrome(s:seq<int>) {
+    forall i | 0 <= i < |s| :: s[i] == s[|s|-i-1]
+}
+
+method palindrome(l:List, s:Stack, q:Queue) returns (b:bool)
+modifies l, l.Repr(), s, s.Repr(), q, q.Repr()
+requires l.Valid()
+requires s.Valid()
+requires q.Valid()
+requires forall x :: x in l.Repr() || x in s.Repr() || x in q.Repr() ==> allocated(x)
+requires {s} + s.Repr() !! {l} + l.Repr()
+requires {q} + q.Repr() !! {l} + l.Repr()
+requires {s} + s.Repr() !! {q} + q.Repr()
+requires s.Empty()
+requires q.Empty()
+
+ensures l.Valid() && l.Model() == old(l.Model())
+ensures s.Valid()
+ensures q.Valid()
+
+ensures b <==> isPalindrome(l.Model())
+
+ensures forall x {:trigger x in l.Repr(), x in old(l.Repr())} | x in l.Repr() && x !in old(l.Repr()) :: fresh(x)
+ensures fresh(l.Repr()-old(l.Repr()))
+ensures forall x | x in l.Repr() :: allocated(x)
+ensures forall x {:trigger x in s.Repr(), x in old(s.Repr())} | x in s.Repr() && x !in old(s.Repr()) :: fresh(x)
+ensures fresh(s.Repr()-old(s.Repr()))
+ensures forall x | x in s.Repr() :: allocated(x)
+ensures forall x {:trigger x in q.Repr(), x in old(q.Repr())} | x in q.Repr() && x !in old(q.Repr()) :: fresh(x)
+ensures fresh(q.Repr()-old(q.Repr()))
+ensures forall x | x in q.Repr() :: allocated(x)
+
+ensures l.Iterators() >= old(l.Iterators()) {
+    b := true;
+
+    if l.Size() == 0 {
+        return;
+    }
+
+    assert l.Size() > 0;
+
+    fillStack(l, s);
+    fillQueue(l, q);
+
+    assert l.Model() == old(l.Model());
+
+    ghost var ss := s.Model();
+    assert ss == Seq.Rev(l.Model());
+    Seq.lreverse(l.Model());
+    assert forall i | 0 <= i < l.Size() :: Seq.Rev(l.Model())[i] == ss[i] == l.Model()[l.Size()-i-1];
+
+    ghost var qs := q.Model();
+    assert qs == l.Model();
+    assert forall i | 0 <= i < l.Size() :: qs[i] == l.Model()[i];
+
+    assert (forall i | 0 <= i < l.Size() :: qs[i] == ss[i]) <==> isPalindrome(l.Model());
+
+    var i:int := 0;
+    var sElem:int;
+    var qElem:int;
+
+    while i < l.Size() && b
+    decreases l.Size() - i, b
+    invariant l.Valid()
+    invariant s.Valid()
+    invariant q.Valid()
+    invariant 0 <= i <= l.Size() == |l.Model()| == |ss| == |qs|
+    invariant |l.Model()| >= |s.Model()| == |q.Model()| == |l.Model()| - i >= 0
+    invariant l.Model() == old(l.Model())
+    invariant i < l.Size() ==> s.Model() == ss[i..] && s.Model() != []
+    invariant i < l.Size() ==> q.Model() == qs[i..] && q.Model() != []
+    invariant b <==> ss[..i] == qs[..i]
+    invariant {s} + s.Repr() !! {l} + l.Repr()
+    invariant {q} + q.Repr() !! {l} + l.Repr()
+    invariant {s} + s.Repr() !! {q} + q.Repr()
+    invariant forall x {:trigger x in l.Repr(), x in old(l.Repr())} | x in l.Repr() && x !in old(l.Repr()) :: fresh(x)
+    invariant fresh(l.Repr()-old(l.Repr()))
+    invariant forall x | x in l.Repr() :: allocated(x)
+    invariant forall x {:trigger x in s.Repr(), x in old(s.Repr())} | x in s.Repr() && x !in old(s.Repr()) :: fresh(x)
+    invariant fresh(s.Repr()-old(s.Repr()))
+    invariant forall x | x in s.Repr() :: allocated(x)
+    invariant forall x {:trigger x in q.Repr(), x in old(q.Repr())} | x in q.Repr() && x !in old(q.Repr()) :: fresh(x)
+    invariant fresh(q.Repr()-old(q.Repr()))
+    invariant forall x | x in q.Repr() :: allocated(x)
+    invariant l.Iterators() >= old(l.Iterators()) {
+        assert b <==> ss[..i] == qs[..i];
+
+        sElem := s.Pop();
+        qElem := q.Dequeue();
+
+        assert sElem == ss[i];
+        assert qElem == qs[i];
+
+        if sElem != qElem {
+            b := false;
+            assert b <==> ss[..i+1] == qs[..i+1];
+        }
+
+        i := i + 1;
+    }
+}
